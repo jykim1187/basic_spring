@@ -1,11 +1,16 @@
 package com.beyond.basic.b1_hello.controller;
 
 import com.beyond.basic.b1_hello.domain.Hello;
+import com.beyond.basic.b1_hello.domain.StudentReqDto;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 //Component 어노테이션(Controller어노테이션에 내장되어있음)을 통해 별도의 객체를 생성할 필요가 없는, 싱글톤 객체를 생성한다
 //Controller 어노테이션을 통해 쉽게 사용자의  http요청을 처리하고, http응답을 줄 수 있음
@@ -94,7 +99,146 @@ public class HelloController {
         model.addAttribute("modelName",inputName);
         return "helloworld2";
     }
+// 01월 10일!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//    사용자에게 name,email을 입력할 수 있는 화면을 주는 메서드 정의
+    @GetMapping("/form-view")
+    public String formView(){
+        return"form-view";
+    }
 
+//    case1.form  데이터 형식의 post요청 처리(텍스트만 있는 application/x-www~)
+//    형식 : form태그를 쓰면 ?name=xxx&email=yyy 의 파라미터형식의 데이터가 http문서의 body에 들어온다. 그래서 RequestParam형식으로 받을 수 있어 데이터바인딩으로도 받을수 있음
+    @PostMapping("/form-view")
+    @ResponseBody
+    public String formPost1(@ModelAttribute Hello hello){
+        System.out.println(hello);
+        return "ok!";
+    }
 
+//   case2. form 데이터 형식의 post요청 처리(file+text형식)
+//    url 패턴:form-file-view
+    @GetMapping("/form-file-view")
+    public String formFileView(){
+        return "form-file-view";
+    }
 
+    @PostMapping("/form-file-view")
+    @ResponseBody
+//    자바에서 파일을 처리하는 클래스 : MultipartFile
+//    아예 처음부터 hello객체 필드에 MultipartFile 속성에 넣으면 바로 Hello객체로만 받아도 사진도 받을 수 있다.
+    public String formPost2(Hello hello, @RequestParam(value = "photo")MultipartFile photo){
+        System.out.println(hello);
+        System.out.println(photo.getOriginalFilename());
+        return "ok";
+    }
+
+//    case3. js를 활용한 form데이터 전송(text만)
+    @GetMapping("/axious-form-view")
+    public String axiousFormView(){
+        return"axious-form-view";
+    }
+//  js를 통한 form형식도 마찬가지로  ?name=xxx&email=yyy로 들어온다
+    @PostMapping("/axious-form-view")
+    @ResponseBody
+    public String formPost3(@ModelAttribute Hello hello){
+        System.out.println(hello);
+        return "ok"; //이때 form형식과는 다르게 html화면에 ok가 리턴되지않는다 그 이유는 리턴값이 js의 result변수에 할당되었기 때문
+    }
+
+    //    case4. js를 활용한 form데이터 전송(text+file)
+        @GetMapping("/axious-form-fileview")
+    public  String axiousFormFileview(){
+            return "axious-form-fileview";
+        }
+
+        @PostMapping("/axious-form-fileview")
+        @ResponseBody
+    public String formPost4(Hello hello, @RequestParam(value = "photo")MultipartFile photo){
+            System.out.println(hello);
+            System.out.println(photo.getOriginalFilename());
+            return "ok";
+        }
+
+//        case 5. js 활용한 form데이터 전송(text+멀티 file)
+
+    @GetMapping("/axious-form-multifileview")
+    public  String axiousFormMultiFileview(){
+        return "axious-form-multifileview";
+    }
+
+    @PostMapping("/axious-form-multifileview")
+    @ResponseBody
+    public String formPost5(Hello hello, @RequestParam(value = "photos") List<MultipartFile> photos){
+        System.out.println(hello);
+        for(int i=0; i<photos.size(); i++){
+            System.out.println(photos.get(i).getOriginalFilename());
+        }
+        return "ok";
+    }
+
+//    case6.js를 활용한 json데이터 전송
+//    형식 : {name:"hogildong", email:"hong@naver.com"}
+    @GetMapping("/axious-json-view")
+    public String axiousJsonView(){
+        return "axious-json-view";
+    }
+
+    @PostMapping("/axious-json-view")
+    @ResponseBody
+    public String axiousJsonViewPost(@RequestBody Hello hello){ // RequestBody를 빼면 파라미터 형식 json형식은 RequestBody를 붙여야한다
+        System.out.println(hello);
+        return "ok";
+    }
+
+//    case7. 중첩된 JSON데이터 처리
+//    예시데이터(student객체) : {name:"hongildong", email:"hong@naver.com", scores:[{math:60},{music:70},{english:60}]}
+
+    @GetMapping("/axious-nested-json-view")
+    public String axiousNestedJsonView(){
+        return "axious-nested-json-view";
+    }
+
+    @PostMapping("/axious-nested-json-view")
+    @ResponseBody
+    public String axiousNestedJsonViewPost(@RequestBody StudentReqDto studentReqDto){
+        System.out.println(studentReqDto.getName());
+        System.out.println(studentReqDto.getEmail());
+        for(StudentReqDto.Score score : studentReqDto.getScores()){
+            System.out.println(score.getSubject());
+            System.out.println(score.getPoint());
+
+        }
+
+        return "ok";
+    }
+
+//    case 8. json과 file처리
+//    file처리는 기본적으로 form형식을 통해 처리한다.
+//    그래서, json과 file을 동시에 처리하려면, form형식안에 json과 file을 넣어 처리한다.
+    @GetMapping("/axious-json-file-view")
+    public String axiousJsonFileView(){
+        return "axious-json-file-view";
+    }
+
+//    데이터형식 : ?hello={name:"hongildong", email:"hing@naver.com"}&photo=이미지
+    @PostMapping("/axious-json-file-view")
+    @ResponseBody
+    public String axiousJsonFileViewPost(
+//            @RequestParam(value = "hello") String helloString,
+//            @RequestParam(value = "photo") MultipartFile photo
+//            RequestPart는 json과 file을 함께 처리할 때 많이 사용
+            @RequestPart("hello") Hello hello,
+            @RequestPart("photo") MultipartFile photo
+    ) throws JsonProcessingException {
+//    RequestParam으로 받을 때
+    //        ObjectMapper objectMapper = new ObjectMapper();
+//        Hello h1 = objectMapper.readValue(helloString, Hello.class);
+//        System.out.println(h1);
+//        System.out.println(photo.getOriginalFilename());
+
+//        RequestPart로 받을 떄
+        System.out.println(hello);
+        System.out.println(photo.getOriginalFilename());
+        return "ok";
+    }
 }
