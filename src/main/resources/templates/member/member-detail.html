@@ -10,9 +10,9 @@
 <body>
     <div th:replace="member/header :: headerFragment"></div>
     <table>
-        <tr><td>name</td><td>홍길동</td></tr>
-        <tr><td>email</td><td>hong@naver.com</td></tr>
-        <tr><td>password</td><td>12341234</td></tr>
+        <tr><td>name</td><td th:text = "${member.name}"></td></tr>
+        <tr><td>email</td><td th:text = "${member.email}"></td></tr>
+        <tr><td>password</td><td th:text = "${member.password}"></td></tr>
         <tr></tr>
     </table>
 
