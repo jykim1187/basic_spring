@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 public class MemberController {
 
 //    의존성주입(Dependency Injection) 방법1. Autowired 어노테이션 사용 : 필드 주입
-//
+//        방법1은 final로 설정불가
 //        @Autowired //싱글톤 객체를 여기 컨트롤러로 가지고 오겠다.
 //        private MemberService memberService;
 
@@ -36,7 +36,7 @@ public class MemberController {
 //    }
 
 //    의존성 주입 방법 3.RequiredArgs 어노테이션 사용방법
-//    RequiredArgs : 반드시 초기화 되어야하는 필드(final키워드 등)를 대상으로 생성자를 자동으로 만들어주는 어노테이션.
+//    RequiredArgs : 반드시 초기화 되어야하는 필드(final키워드,Nonnull어노테이션 등)를 대상으로 생성자를 자동으로 만들어주는 어노테이션.
     private final MemberService memberService;
 
 
