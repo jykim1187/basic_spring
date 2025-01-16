@@ -22,9 +22,10 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
 #    ddl문 자동 생성. 테이블은 자동반영(생성)해주나. 스키마는 반드시 사전에 생성 필요
     generate-ddl: true
+#    jpa는 인터페이스이고, hibernate가 jap의 실질적인 구현체(실질적인 기능이 구현)
     hibernate:
 #    ddl-auto에는3가지 옵션이 있는데 create옵션은 매번 테이블은 전부 다 삭제하고 다시 테이블 생성(그래서 매우 주의!).
-#    update는 엔티티의 변경사항만 alter를 적용하고 기존데이터는 유지.(모든 변경사항이 다 되는 건 아니다. 가끔 제한적인 경우도 있음)
+#    update는 엔티티의 변경사항만 alter를 적용하고 기존데이터는 유지.(모든 변경사항이 다 되는 건 아니다. 가끔 제한적인 경우도 있음-컬럼의 추가 정도만 반영한다. 컬럼의 길이설정을바꾼다거나 삭제한다거나는 반영x)
 #    validate는 실제DB와의 차이점을 체크하여 콘솔로그로만 출력
       ddl-auto: update
 #    콘솔창에 ddl,dml문을 출력하여 보여주는 옵션

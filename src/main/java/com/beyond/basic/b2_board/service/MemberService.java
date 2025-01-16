@@ -49,11 +49,28 @@ public class MemberService {
             throw new IllegalArgumentException("비밀번호가 너무 짧습니다");
         }
 
+
+
 //        memberMemoryRepository.save(new Member(MemberMemoryRepository.id,memberCreateDto.getName(),
 //                memberCreateDto.getEmail(), memberCreateDto.getPassword()));
             memberRepository.save(memberCreateDto.toEntity());
 
         }
+
+    public Member save2(MemberCreateDto memberCreateDto) throws IllegalArgumentException{
+        if(memberRepository.findByEmail(memberCreateDto.getEmail()).isPresent()){
+            throw new IllegalArgumentException("이미 존재하는 이메일 입니다");
+        }
+
+        else if(memberCreateDto.getPassword().length()<8){
+            throw new IllegalArgumentException("비밀번호가 너무 짧습니다");
+        }
+
+        //사실은 jpa에서 자동으로 db에 저장하면 자동으로 저장하고 객체를 반환받는다. 조회하듯이
+       Member member =  memberRepository.save(memberCreateDto.toEntity());
+        return member;
+
+    }
 
         public MemberDetailDto findById(Long id) throws NoSuchElementException, RuntimeException{
 //           Optional<Member> optioanlMember = memberMemoryRepository.findById(id);
@@ -62,14 +79,22 @@ public class MemberService {
 ////       2.     MemberDetailDto dto = member.detailFromEntity();
 //            return dto;
 
-            return memberRepository.findById(id).orElseThrow(()->new NoSuchElementException("없는 아이디입니다")).detailFromEntity();
+            return memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("없는 아이디입니다")).detailFromEntity();
         }
 
         public void updatePw(MemberUpdateDto memberUpdateDto){
-             Optional<Member> optionalMember= memberRepository.findByEmail(memberUpdateDto.getEmail());
-             Member tempMember = optionalMember.orElseThrow(()->new EntityNotFoundException("없는 사용자입니다"));
-             tempMember.changePw(memberUpdateDto.getNewPassword());
+             Member member = memberRepository.findByEmail(memberUpdateDto.getEmail())
+             .orElseThrow(()->new EntityNotFoundException("없는 사용자입니다"));
+             member.changePw(memberUpdateDto.getNewPassword());
 //            기존 객체를 조회후에 다시 save할 경우에는 insert가 아니라 update쿼리 실행
-             memberRepository.save(tempMember);
+             memberRepository.save(member);
+//
+    }
+
+
+        public void delete(Long id){
+//            memberRepository.deleteById(id);
+              Member member = memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("not found"));
+              memberRepository.delete(member);
     }
 }

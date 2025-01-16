@@ -29,6 +29,7 @@ public class Member {
     private String email;
 //    @Column(name = "pw") 이렇게 할 수는 있으나, 되도록이면 컬럼명과 변수명을 일치시키는 것이 개발의 혼선을 줄일 수 있음
     private String password;
+//    java에서 케멀케이스 사용시 db에는 created_time으로 컬럼 변환
     @CreationTimestamp
     private LocalDateTime createdTime;
     @UpdateTimestamp
