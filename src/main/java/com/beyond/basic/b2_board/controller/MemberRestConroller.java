@@ -38,46 +38,36 @@ public class MemberRestConroller {
 
     @GetMapping("/detail/{id}")
     public ResponseEntity<?> memberDetail(@PathVariable Long id) {
-        try{
+
             MemberDetailDto dto = memberService.findById(id);
             return new ResponseEntity<>(new CommonDto(HttpStatus.OK.value(),"member is successfully found",dto),HttpStatus.OK);
-        } catch(EntityNotFoundException e) {
-            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.NOT_FOUND.value(), e.getMessage()), HttpStatus.NOT_FOUND);
-        }
+
     }
 
     //    회원가입(name,email,password)=>MemberCreateDto
     @PostMapping("/create")
     public ResponseEntity<?> memberCreate(@RequestBody MemberCreateDto memberCreateDto){
-        try {
+
            Member member =  memberService.save2(memberCreateDto);
             return new ResponseEntity<>(new CommonDto(HttpStatus.CREATED.value(),"member is created",member.getId()),HttpStatus.CREATED);
-        } catch (IllegalArgumentException e){
-            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.BAD_REQUEST.value(), e.getMessage()),HttpStatus.BAD_REQUEST);
-        }
+
     }
 
 //   get:조회, post:등록, patch:부분수정, put:대체, delete:삭제
 //    프론트에도 axious.patch가 따로있음
     @PatchMapping("/update/pw")
     public ResponseEntity<?> memberUpdate(@RequestBody MemberUpdateDto memberUpdateDto){
-      try{
+
           memberService.updatePw(memberUpdateDto);
           return new ResponseEntity<>(new CommonDto(HttpStatus.OK.value(), "member is updated","success"),HttpStatus.OK);
-      } catch(EntityNotFoundException e){
-          return new ResponseEntity<>(new CommonErrorDto(HttpStatus.NOT_FOUND.value(), e.getMessage()),HttpStatus.NOT_FOUND);
-      }
 
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteMember(@PathVariable Long id){
-        try{
+
             memberService.delete(id);
             return new ResponseEntity<>(new CommonDto(HttpStatus.OK.value(), "member is deleted","member is deleted"),HttpStatus.OK);
-        }catch(EntityNotFoundException e){
-           return new ResponseEntity<>(new CommonErrorDto(HttpStatus.NOT_FOUND.value(), e.getMessage()),HttpStatus.NOT_FOUND);
-        }
 
     }
 
